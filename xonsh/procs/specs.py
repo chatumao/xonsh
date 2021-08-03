@@ -478,7 +478,21 @@ class SubprocSpec:
             sug = xt.suggest_commands(cmd0, env, XSH.aliases)
             if len(sug.strip()) > 0:
                 e += "\n" + xt.suggest_commands(cmd0, env, XSH.aliases)
+            import inspect as ins
+            frames = ins.stack()
+            for idx in range(len(frames)):
+                frame = frames[idx]
+                if frame.filename[:16] != "/usr/lib/python3":
+                    raise Exception(f"{e}\nWhere: {frame.filename}: {frame.function}():{frame.lineno}\n")
             raise xt.XonshError(e)
+        except Exception as exc:
+            import inspect as ins
+            frames = ins.stack()
+            for idx in range(len(frames)):
+                frame = frames[idx]
+                if frame.filename[:16] != "/usr/lib/python3":
+                    raise Exception(f"{frame.filename}: {frame.function}():{frame.lineno}")
+            raise
         return p
 
     def prep_env(self, kwargs):

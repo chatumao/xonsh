@@ -595,7 +595,8 @@ class CommandPipeline:
                 for idx in range(len(frames)):
                     frame = frames[idx] 
                     if frame.filename[:16] != "/usr/lib/python3":
-                        raise Exception(f"{frame.filename}: {frame.function}():{frame.lineno}")
+                        raise Exception(f"CalledProcessError\nWhere: {frame.filename}: {frame.function}():{frame.lineno}")
+                raise subprocess.CalledProcessError(rtn, spec.args, output=self.output)
             finally:
                 # this is need to get a working terminal in interactive mode
                 self._return_terminal()
