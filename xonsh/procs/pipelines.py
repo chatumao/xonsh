@@ -590,7 +590,12 @@ class CommandPipeline:
         rtn = self.returncode
         if rtn is not None and rtn != 0 and XSH.env.get("RAISE_SUBPROC_ERROR"):
             try:
-                raise subprocess.CalledProcessError(rtn, spec.args, output=self.output)
+                import inspect as ins
+                frames = ins.stack()
+                for idx in range(len(frames)):
+                    frame = frames[idx] 
+                    if frame.filename[:16] != "/usr/lib/python3":
+                        raise Exception(f"{frame.filename}: {frame.function}():{frame.lineno}")
             finally:
                 # this is need to get a working terminal in interactive mode
                 self._return_terminal()
